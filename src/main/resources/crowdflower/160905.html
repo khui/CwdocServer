@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div class="html-element-wrapper">
+    <p>
+        <strong>Key phrases query:</strong>
+        <br /> {{query}}
+        <br />
+        <strong>More detailed description:</strong>
+        <br /> {{description}}
+        <br />
+        <a target="_blank" href="http://www.google.com/search?q={{query| urlencode }}" class="btn">Click to search     with Google</a>
+    </p>
+    <br />
+
+    <a class="docurl" target="_blank" href="{{url}}">Url to the Document</a>
+
+    <br />
+    <button class="click2jud" type="button">Click Here to Judge</button>
+
+    <cml:hidden class="startread" value="0" name="startread" gold="false"/>
+    <cml:hidden class="startjud" value="0" name="startjud" gold="false"/>
+    <cml:hidden class="endjud" value="0" name="endjud" gold="false"/>
+
+    <div class="judradios" style="display:none">
+        <cml:radios label="How well does the Page of results match the Query?" validates="required" instructions="Please only make your judgement on the first 5 rows on the page" gold="true">
+            <cml:radio label="Off Topic" value="0"></cml:radio>
+            <cml:radio label="Acceptable" value="1"></cml:radio>
+            <cml:radio label="Good" value="2"></cml:radio>
+            <cml:radio label="The URL is not valid" value="-1"></cml:radio>
+        </cml:radios>
+    </div>
+</div>
+
+<script>
+    require(['jquery-noconflict'], function($) {
+        //Ensure MooTools is where it must be
+        Window.implement('$', function(el, nc){
+            return document.id(el, nc, this.document);
+        });
+
+        var $ = window.jQuery;
+        var currentId="";
+        // buttion to show judgment
+        $('.docurl').not('#clicked').on("click", function(){
+            currentId = this.parentElement.parentElement.id;
+            // alert("this.id " + currentId);
+            startread=new Date().getTime();
+            document.getElementsByName(currentId + "[startread]")[0].value = startread;
+            // $(this).replaceWith( "<a>You Already Read this Document.</a>" );
+        });
+        $('.click2jud').on("click", function() {
+            startjud=new Date().getTime();
+            document.getElementsByName(currentId + "[startjud]")[0].value = startjud;
+            // $('.judradios').show(800);
+            // $(this).closest('.judradios').show(800);
+            $('#'+currentId).find('.judradios').show(800);
+        });
+        // after judge hide judgment
+        $('.judradios').on("click", function() {
+            endjud=new Date().getTime();
+            document.getElementsByName(currentId + "[endjud]")[0].value = endjud;
+            $('#'+currentId).find('.judradios').hide(2000);
+            // $('#'+currentId).find('.docurl').removeAttr('href');
+            $('#'+currentId).find('.click2jud').hide(800);
+            $('#'+currentId).find('.docurl').replaceWith(
+                    "<a class=\"docurl\" id=\"clicked\" style=\"color: rgb(255,0,0)\">This document is judged, thanks!</a>" );
+            currentId="";
+        });
+    });
+</script>
+
+</body>
+</html>
