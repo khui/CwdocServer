@@ -1,0 +1,296 @@
+<div class="row-fluid row docpair" name="d1_d2" id="d1_d2">
+  <div>
+    <p align="center">
+      <strong>Key phrases query:</strong>
+      <br /> {{query}}
+      <br />
+      <strong>More detailed description:</strong>
+      <br /> {{description}}
+      <br />
+      <a target="_blank" href="http://www.google.com/search?q={{query| urlencode }}" class="btn">Click to search     with Google</a>
+    </p>
+  </div>
+  <div class="row-fluid row">
+    <div class="space">
+      <div class="span6 col-sm-6 col-md-6">
+        <p align="center">
+          <a class="docurl_left" target="_blank" href="{{d1_url}}">Click to Read Document A</a>
+        </p>
+      </div>
+      <div class="span6 col-sm-6 col-md-6">
+        <p align="center">
+          <a class="docurl_right" target="_blank" style="display:none" href="{{d2_url}}">Click to Read Document B</a>
+        </p>
+      </div>
+    </div>
+  </div>
+  <button class="click2jud" type="button">Click Here to Judge</button>
+  <cml:hidden class="startread1" value="0" name="d1_d2_sRt1" gold="false"></cml:hidden>
+  <cml:hidden class="startread2" value="0" name="d1_d2_sRt2" gold="false"></cml:hidden>
+  <cml:hidden class="startjud" value="0" name="d1_d2_sJt" gold="false"></cml:hidden>
+  <cml:hidden class="endjud" value="0" name="d1_d2_eJt" gold="false"></cml:hidden>
+  <text style="display:none" class="pjud_trec">{{d1_d2_pjud_trec}}</text>
+  
+  <div class="judradios" style="display:none">
+    <cml:radios label="Which document is more relevant to the query or they are equivalently relevant?" validates="required" name="d1_d2_pjud">
+      <cml:radio label="Document A is more relevant" value="1" />
+      <cml:radio label="Document A and Document B are equivalently Relevant" value="0" />
+      <cml:radio label="Document B is more relevant" value="-1" />
+      <cml:radio label="Either URL is not valid" value="-2" />
+    </cml:radios>
+  </div>
+</div>
+<div class="row-fluid row docpair" name="d2_d3" id="d2_d3">
+  <div>
+    <p align="center">
+      <strong>Key phrases query:</strong>
+      <br /> {{query}}
+      <br />
+      <strong>More detailed description:</strong>
+      <br /> {{description}}
+      <br />
+      <a target="_blank" href="http://www.google.com/search?q={{query| urlencode }}" class="btn">Click to search     with Google</a>
+    </p>
+  </div>
+  <div class="row-fluid row">
+    <div class="space">
+      <div class="span6 col-sm-6 col-md-6">
+        <p align="center">
+          <a class="docurl_left" target="_blank" href="{{d2_url}}">Click to Read Document A</a>
+        </p>
+      </div>
+      <div class="span6 col-sm-6 col-md-6">
+        <p align="center">
+          <a class="docurl_right" target="_blank" style="display:none" href="{{d3_url}}">Click to Read Document B</a>
+        </p>
+      </div>
+    </div>
+  </div>
+  <button class="click2jud" type="button">Click Here to Judge</button>
+  <cml:hidden class="startread1" value="0" name="d2_d3_sRt1" gold="false"></cml:hidden>
+  <cml:hidden class="startread2" value="0" name="d2_d3_sRt2" gold="false"></cml:hidden>
+  <cml:hidden class="startjud" value="0" name="d2_d3_sJt" gold="false"></cml:hidden>
+  <cml:hidden class="endjud" value="0" name="d2_d3_eJt" gold="false"></cml:hidden>
+  <text style="display:none" class="pjud_trec">{{d2_d3_pjud_trec}}</text>
+  
+  <div class="judradios" style="display:none">
+    <cml:radios label="Which document is more relevant to the query or they are equivalently relevant?" validates="required" name="d2_d3_pjud">
+      <cml:radio label="Document A is more relevant" value="1" />
+      <cml:radio label="Document A and Document B are equivalently Relevant" value="0" />
+      <cml:radio label="Document B is more relevant" value="-1" />
+      <cml:radio label="Either URL is not valid" value="-2" />
+    </cml:radios>
+  </div>
+</div>
+<div class="row-fluid row docpair" name="d1_d3" id="d1_d3">
+  <div>
+    <p align="center">
+      <strong>Key phrases query:</strong>
+      <br /> {{query}}
+      <br />
+      <strong>More detailed description:</strong>
+      <br /> {{description}}
+      <br />
+      <a target="_blank" href="http://www.google.com/search?q={{query| urlencode }}" class="btn">Click to search     with Google</a>
+    </p>
+  </div>
+  <div class="row-fluid row">
+    <div class="space">
+      <div class="span6 col-sm-6 col-md-6">
+        <p align="center">
+          <a class="docurl_left" target="_blank" href="{{d1_url}}">Click to Read Document A</a>
+        </p>
+      </div>
+      <div class="span6 col-sm-6 col-md-6">
+        <p align="center">
+          <a class="docurl_right" target="_blank" style="display:none" href="{{d3_url}}">Click to Read Document B</a>
+        </p>
+      </div>
+    </div>
+  </div>
+  <button class="click2jud" type="button">Click Here to Judge</button>
+  <cml:hidden class="startread1" value="0" name="d1_d3_sRt1" gold="false"></cml:hidden>
+  <cml:hidden class="startread2" value="0" name="d1_d3_sRt2" gold="false"></cml:hidden>
+  <cml:hidden class="startjud" value="0" name="d1_d3_sJt" gold="false"></cml:hidden>
+  <cml:hidden class="endjud" value="0" name="d1_d3_eJt" gold="false"></cml:hidden>
+  <text style="display:none" class="pjud_trec">{{d1_d3_pjud_trec}}</text>
+  
+  <div class="judradios" style="display:none">
+    <cml:radios label="Which document is more relevant to the query or they are equivalently relevant?" validates="required" name="d1_d3_pjud">
+      <cml:radio label="Document A is more relevant" value="1" />
+      <cml:radio label="Document A and Document B are equivalently Relevant" value="0" />
+      <cml:radio label="Document B is more relevant" value="-1" />
+      <cml:radio label="Either URL is not valid" value="-2" />
+    </cml:radios>
+  </div>
+</div>
+
+<cml:hidden class="aggregateJud" value="0" name="triplet_jud" gold="true"/>
+
+
+
+
+
+require(['jquery-noconflict'], function($) {
+ //Ensure MooTools is where it must be
+  Window.implement('$', function(el, nc){
+    return document.id(el, nc, this.document);
+  });
+
+  var $ = window.jQuery;
+  var debug = true;
+  
+  var docpairName="";
+  // buttion to show judgment 
+  $('.docurl_left').on("click", function(){
+    
+      if (debug){
+    $(this).parents('.cml').find('.docpair').filter('#d1_d2').find('.pjud_trec').show();
+    $(this).parents('.cml').find('.docpair').filter('#d1_d3').find('.pjud_trec').show();
+    $(this).parents('.cml').find('.docpair').filter('#d2_d3').find('.pjud_trec').show();
+  }
+    
+    cId = $(this).parents('.cml').attr('id');
+    // currentId = this.parentElement.parentElement.id;
+    // alert("this.id " + currentId);
+    startread=new Date().getTime();
+    $(this).parents('.docpair').find('.startread1')[1].value = startread;
+    // document.getElementsByName(cId + "[d1_d2_srt1]")[0].value = startread;
+    $(this).parents('.space').find('.docurl_right').show(800);
+    
+  });
+  $('.docurl_right').on("click", function(){
+    cId = $(this).parents('.cml').attr('id');
+    startread=new Date().getTime();
+    $(this).parents('.docpair').find('.startread2')[1].value = startread;
+
+    // document.getElementsByName(cId + "[d1_d2_srt2]")[0].value = startread;
+    docpairName = $(this).parents('.docpair').attr('name');
+    // currentId=cId;
+  });
+
+   $('.click2jud').on("click", function() {
+     dpn = $(this).parents('.docpair').attr('name');
+     if (dpn === docpairName){
+      startjud=new Date().getTime();
+      $(this).parents('.docpair').find('input').filter('.startjud')[0].value = startjud;
+      $(this).parents('.docpair').find('.judradios').show(800);
+     }
+   });
+   // after judge hide judgment
+   $('.cml_row').on("click", function() {
+     dpn = $(this).parents('.docpair').attr('name');
+     if (dpn === docpairName){
+      endjud=new Date().getTime();
+      $(this).parents('.docpair').find('input').filter('.endjud')[0].value = endjud;
+      $(this).parents('.docpair').find('.judradios').hide(2000);
+      $(this).parents('.docpair').find('.click2jud').hide(800);
+
+      $(this).parents('.docpair').find('.docurl_left').replaceWith(
+      "<a class=\"docurl\" id=\"clicked\" style=\"color: rgb(255,0,0)\">This document is judged, thanks!</a>");
+      $(this).parents('.docpair').find('.docurl_right').replaceWith(
+      "<a class=\"docurl\" id=\"clicked\" style=\"color: rgb(255,0,0)\">This document is judged, thanks!</a>");
+      
+      dpn = $(this).parents('.docpair').attr('name');
+      if (dpn === "d1_d3"){
+        var t12 = $(this).parents('.cml').find('.docpair').filter('#d1_d2').find('.pjud_trec').html();
+        var t13 = $(this).parents('.cml').find('.docpair').filter('#d1_d3').find('.pjud_trec').html();
+        var t23 = $(this).parents('.cml').find('.docpair').filter('#d2_d3').find('.pjud_trec').html();
+        var d12 = $('input[name="' + cId + '[d1_d2_pjud]"]:checked').val();
+        var d13 = $('input[name="' + cId + '[d1_d3_pjud]"]:checked').val();
+        var d23 = $('input[name="' + cId + '[d2_d3_pjud]"]:checked').val();
+        
+        var correctCount = 0;
+        if (t12===d12){
+          correctCount++;
+        } else if (d12==='0') {
+          correctCount += 0.5;
+        }
+        if (t23===d23){
+          correctCount++;
+        } else if (d23==='0') {
+          correctCount += 0.5;
+        }
+        if (t13===d13){
+          correctCount++;
+        } else if (d23==='0') {
+          correctCount += 0.5;
+        }
+        
+        
+        var tripletjud;
+        if (correctCount >= 2.5){
+          tripletjud = 1;
+        } else {
+          tripletjud = 0;
+        }
+        $(this).parents('.cml').find('.aggregateJud').filter('input').value=tripletjud;
+      }
+     }
+   });
+}); 
+
+
+
+/* Well magic */
+.well-white {
+  background-color: white;
+}
+
+.well-white p {
+  margin-bottom: 0px;
+}
+
+.center {
+  text-align: center;
+}
+
+.well {
+  margin-bottom: 0px;
+  padding: 15px;
+}
+
+.outer-well {
+  margin-bottom: 10px;
+}
+
+.cml_field.radios label {
+  display:inline;
+}
+
+
+.legend {
+  font-weight: 300 !important;
+}
+
+label {
+  font-weight: 300 !important;
+  width: 25%;
+}
+
+
+.query {
+  font-size: 150%;
+  margin-left: 10px
+}
+
+.option {
+  border:solid 1px;
+  text-align: center; 
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+   border-radius: 25px;
+}
+
+.indicator {
+  font-size: 500%;
+}
+
+
+
+
+
+
+
+
