@@ -35,7 +35,7 @@ public class ErrorHandler extends HttpServlet {
                 "<body bgcolor=\"#f0f0f0\">\n");
 
         out.println("<h2>There are some errors with the requested page.</h2>");
-        out.println("<br /><p>Sorry for this inconvenience. Please mark this page as \"The URL is not valid\" and " +
+        out.println("<br /><p>Sorry for this inconvenience. Please try current page later and " +
                 "move on to the next judgment.</p>");
         out.println("<br /><p>^_^</p>");
 
