@@ -129,8 +129,6 @@
 
 
 
-
-
 require(['jquery-noconflict'], function($) {
  //Ensure MooTools is where it must be
   Window.implement('$', function(el, nc){
@@ -140,7 +138,8 @@ require(['jquery-noconflict'], function($) {
   var $ = window.jQuery;
   var debug = true;
   
-  var docpairName="";
+  var docpairName;
+  var currentId;
   // buttion to show judgment 
   $('.docurl_left').on("click", function(){
     
@@ -151,6 +150,7 @@ require(['jquery-noconflict'], function($) {
   }
     
     cId = $(this).parents('.cml').attr('id');
+    currentId = cId;
     // currentId = this.parentElement.parentElement.id;
     // alert("this.id " + currentId);
     startread=new Date().getTime();
@@ -170,17 +170,20 @@ require(['jquery-noconflict'], function($) {
   });
 
    $('.click2jud').on("click", function() {
+    cId = $(this).parents('.cml').attr('id');
      dpn = $(this).parents('.docpair').attr('name');
-     if (dpn === docpairName){
+     if (dpn === docpairName && currentId === cId){
       startjud=new Date().getTime();
       $(this).parents('.docpair').find('input').filter('.startjud')[0].value = startjud;
       $(this).parents('.docpair').find('.judradios').show(800);
      }
    });
    // after judge hide judgment
-   $('.cml_row').on("click", function() {
+   $('.judradios').on("click", function() {
+     cId = $(this).parents('.cml').attr('id');
      dpn = $(this).parents('.docpair').attr('name');
-     if (dpn === docpairName){
+     var isChecked = $('input[name="' + cId + '['+ dpn +'_pjud]"]').is(':checked');
+     if (dpn === docpairName && currentId === cId && isChecked){
       endjud=new Date().getTime();
       $(this).parents('.docpair').find('input').filter('.endjud')[0].value = endjud;
       $(this).parents('.docpair').find('.judradios').hide(2000);
@@ -229,7 +232,6 @@ require(['jquery-noconflict'], function($) {
      }
    });
 }); 
-
 
 
 /* Well magic */
