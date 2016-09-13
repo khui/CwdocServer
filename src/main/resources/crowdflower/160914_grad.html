@@ -1,0 +1,170 @@
+v class="html-element-wrapper">
+  <div class="singledoc" name="d1" id="d1">
+
+    <div>
+      <p>
+        <strong>Key phrases query:</strong>
+        <br /> {{query}}
+        <br /> 
+        <strong>More detailed description:</strong>
+        <br /> {{description}}
+        <br />
+        <a target="_blank" href="http://www.google.com/search?q={{query| urlencode }}" class="btn">Click to search     with Google</a>
+      </p>
+    </div>
+  
+    <a class="docurl" target="_blank" href="{{d1_url}}">Click to Read Document</a>
+    
+    <br />
+  
+    <button class="click2jud" type="button">Click Here to Judge</button>
+    <cml:hidden class="startread" value="0" name="d1_sRt" gold="false"></cml:hidden>
+    <cml:hidden class="startjud" value="0" name="d1_sJt" gold="false"></cml:hidden>
+    <cml:hidden class="endjud" value="0" name="d1_eJt" gold="false"></cml:hidden>
+
+  
+    <div class="judradios" style="display:none">
+      <cml:radios label="How well does the Page of results match the Query?" validates="required" gold="true" name="d1_gjud">
+        <cml:radio label="Non-Relevant" value="0"></cml:radio>
+        <cml:radio label="Relevant" value="1"></cml:radio>
+        <cml:radio label="Highly-Relevant" value="2"></cml:radio>
+        <cml:radio label="Navigational" value="4"></cml:radio>
+      </cml:radios>
+    </div>
+  </div>
+
+ 
+  <br />
+  
+  <div class="singledoc" name="d2" id="d2">
+    <div>
+      <p>
+        <strong>Key phrases query:</strong>
+        <br /> {{query}}
+        <br /> 
+        <strong>More detailed description:</strong>
+        <br /> {{description}}
+        <br />
+        <a target="_blank" href="http://www.google.com/search?q={{query| urlencode }}" class="btn">Click to search     with Google</a>
+      </p>
+    </div>
+    
+    <a class="docurl" target="_blank" href="{{d2_url}}">Click to Read Document</a>
+    
+    <br />
+  
+    <button class="click2jud" type="button">Click Here to Judge</button>
+    <cml:hidden class="startread" value="0" name="d2_sRt" gold="false"></cml:hidden>
+    <cml:hidden class="startjud" value="0" name="d2_sJt" gold="false"></cml:hidden>
+    <cml:hidden class="endjud" value="0" name="d2_eJt" gold="false"></cml:hidden>
+
+  
+    <div class="judradios" style="display:none">
+      <cml:radios label="How well does the Page of results match the Query?" validates="required" gold="true" name="d2_gjud">
+        <cml:radio label="Non-Relevant" value="0"></cml:radio>
+        <cml:radio label="Relevant" value="1"></cml:radio>
+        <cml:radio label="Highly-Relevant" value="2"></cml:radio>
+        <cml:radio label="Navigational" value="4"></cml:radio>
+      </cml:radios>
+    </div>
+  </div>
+  
+  
+  
+  <br />
+  
+  <div class="singledoc" name="d3" id="d3">
+    <div>
+      <p>
+        <strong>Key phrases query:</strong>
+        <br /> {{query}}
+        <br /> 
+        <strong>More detailed description:</strong>
+        <br /> {{description}}
+        <br />
+        <a target="_blank" href="http://www.google.com/search?q={{query| urlencode }}" class="btn">Click to search     with Google</a>
+      </p>
+    </div>
+   
+  
+    <a class="docurl" target="_blank" href="{{d3_url}}">Click to Read Document</a>
+    
+    <br />
+  
+    <button class="click2jud" type="button">Click Here to Judge</button>
+    <cml:hidden class="startread" value="0" name="d3_sRt" gold="false"></cml:hidden>
+    <cml:hidden class="startjud" value="0" name="d3_sJt" gold="false"></cml:hidden>
+    <cml:hidden class="endjud" value="0" name="d3_eJt" gold="false"></cml:hidden>
+
+  
+    <div class="judradios" style="display:none">
+      <cml:radios label="How well does the Page of results match the Query?" validates="required" gold="true" name="d3_gjud">
+        <cml:radio label="Non-Relevant" value="0"></cml:radio>
+        <cml:radio label="Relevant" value="1"></cml:radio>
+        <cml:radio label="Highly-Relevant" value="2"></cml:radio>
+        <cml:radio label="Navigational" value="4"></cml:radio>
+      </cml:radios>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+require(['jquery-noconflict'], function($) {
+ //Ensure MooTools is where it must be
+  Window.implement('$', function(el, nc){
+    return document.id(el, nc, this.document);
+  });
+
+  var $ = window.jQuery;
+
+  var singleDocName;
+  var currentId;
+
+  // buttion to show judgment 
+  $('.docurl').on("click", function(){
+    
+    cId = $(this).parents('.cml').attr('id');
+    currentId = cId;
+    
+    // currentId = this.parentElement.parentElement.id;
+    // alert("this.id " + currentId);
+    startread=new Date().getTime();
+    $(this).parents('.singledoc').find('.startread')[1].value = startread;
+    // document.getElementsByName(cId + "[d1_d2_srt1]")[0].value = startread;
+    singleDocName = $(this).parents('.singledoc').attr('name');
+  });
+
+   $('.click2jud').on("click", function() {
+     sdn = $(this).parents('.singledoc').attr('name');
+     cId = $(this).parents('.cml').attr('id');
+
+     if (sdn === singleDocName&& currentId === cId){
+      startjud=new Date().getTime();
+      $(this).parents('.singledoc').find('input').filter('.startjud')[0].value = startjud;
+      $(this).parents('.singledoc').find('.judradios').show(800);
+     }
+   });
+   // after judge hide judgment
+   $('.judradios').on("click", function() {
+     
+     var sde = $(this).parents('.singledoc')[0];
+     var sdn = sde.id;
+     var cId = $(this).parents('.cml').attr('id');
+
+     var isChecked = $('input[name="' + cId + '['+ sdn +'_gjud]"]').is(':checked');
+     
+     if (sdn === singleDocName && currentId === cId && isChecked){
+      endjud=new Date().getTime();
+      $(this).parents('.singledoc').find('input').filter('.endjud')[0].value = endjud;
+      $(this).parents('.singledoc').find('.judradios').hide(2000);
+      $(this).parents('.singledoc').find('.click2jud').hide(800);
+
+      $(this).parents('.singledoc').find('.docurl').replaceWith(
+    "<a class=\"docurl\" id=\"clicked\" style=\"color: rgb(255,0,0)\">This document is judged, thanks!</a>");
+
+     }
+   });
+}); 
