@@ -90,29 +90,15 @@ def selectDocs(labelDocs, cwidGrad, judnum=12):
     return doc4jud, doc4test
 def createJudPairs(doc4jud):
     return [(doc4jud[i], doc4jud[j]) for i in range(len(doc4jud)) for j in range(i+1, len(doc4jud))]
-def createTestPairs(doc4test, cwidGrad, testnum):
-    abstestpairs=list()
-    tietestpairs=list()
+def createTestPairs(doc4test, cwidGrad):
     testpairs=list()
     for i in range(len(doc4test)):
         for j in range(i+1, len(doc4test)):
-            if abs(cwidGrad[doc4test[i]] -  cwidGrad[doc4test[j]])>=2:
-                abstestpairs.append((doc4test[i], doc4test[j]))
-            elif cwidGrad[doc4test[i]] !=  cwidGrad[doc4test[j]]:
-                tietestpairs.append((doc4test[i], doc4test[j]))
-    random.shuffle(abstestpairs)
-    random.shuffle(tietestpairs)
-    for i in range(testnum):
-        if i < len(abstestpairs):
-            testpairs.append(abstestpairs[i])
-        if len(testpairs) >= testnum:
-            break
-        if i < len(tietestpairs):
-            testpairs.append(tietestpairs[i]) 
-        if len(testpairs) >= testnum:
-            break
+            d1, d2 = doc4test[i], doc4test[j]
+            if cwidGrad[d1] != cwidGrad[d2]:
+                testpairs.append((doc4test[i], doc4test[j]))
     return testpairs
-def createTestDoc4Grad(ldocs, alldocs2consider, testnum):
+def createTestDoc(ldocs, alldocs2consider, testnum):
     labledocs = dict(ldocs)
     testdocs=list()
     grads = list(labledocs.keys())
@@ -162,7 +148,7 @@ def writeCFPrefData(qid, query, description, cwiddocid, cwidourls,
         doclist = list(docpair)
         random.shuffle(doclist)
         cwid1, cwid2 = docpair
-        lineid = "J" + str(qid) + "%03d"%(len(lines) - 1)
+        lineid = "PJ" + str(qid) + "%03d"%(len(lines))
         line = ','.join([lineid, str(qid), query, description,"False",\
                 cwid1, str(cwiddocid[cwid1]), createOurl(cwid1),\
                 createUrl(cwiddocid[cwid1]),str(cwidGrad[cwid1]),\
@@ -173,7 +159,7 @@ def writeCFPrefData(qid, query, description, cwiddocid, cwidourls,
     for docpair in pair4test:
         doclist = list(docpair)
         random.shuffle(doclist)
-        lineid = "T" + str(qid) + "%03d"%(len(lines) - 1)
+        lineid = "PT" + str(qid) + "%03d"%(len(lines))
         cwid1, cwid2 = docpair
         line = ','.join([lineid, str(qid), query, description,"True",\
                 cwid1, str(cwiddocid[cwid1]), createOurl(cwid1),\
@@ -189,6 +175,21 @@ def writeCFPrefData(qid, query, description, cwiddocid, cwidourls,
     with open(outfile, "w+") as f:
         for l in lines:
             f.write(l + "\n")
+    return headline
+
+def writeCFTitle(rootoutdir, prefTitle, gradTitle):
+    outdir = rootoutdir + "/pref"
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+    outfile=outdir+"/title.csv"
+    with open(outfile, "w+") as f:
+        f.write(prefTitle)
+    outdir = rootoutdir + "/grad"
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+    outfile=outdir+"/title.csv"
+    with open(outfile, "w+") as f:
+        f.write(gradTitle)
 
 def writeCFGradedData(qid, query, description, 
                       cwiddocid, cwidourls, outdir,
@@ -211,14 +212,14 @@ def writeCFGradedData(qid, query, description,
                         "d_gjud_gold","d_gjud_gold_reason"])
     #lines.append(headline)
     for cwid in doc4jud:
-        lineid = "J" + str(qid) + "%03d"%(len(lines) - 1)
+        lineid = "GJ" + str(qid) + "%03d"%(len(lines))
         line = ','.join([lineid, str(qid), query, description,"False",\
                 cwid, str(cwiddocid[cwid]), cwidourls[cwid],createUrl(cwiddocid[cwid]),\
                 createGold(cwidGrad[cwid]),gradgoldreason])
         lines.append(line)
 
     for cwid in doc4test:
-        lineid = "T" + str(qid) + "%03d"%(len(lines) - 1)
+        lineid = "GT" + str(qid) + "%03d"%(len(lines))
         line = ','.join([lineid, str(qid), query, description,\
                         "True", cwid, str(cwiddocid[cwid]), \
                         cwidourls[cwid],createUrl(cwiddocid[cwid]),\
@@ -231,8 +232,36 @@ def writeCFGradedData(qid, query, description,
     with open(outfile, "w+") as f:
         for l in lines:
             f.write(l + "\n")
+    return headline
 
+def writeTriplet(qid, judtriplet, testtriplet, outdir):
+    lines=list()
+    tid=0
+    for dtup in judtriplet:
+        d1, d2, d3 = sorted(list(dtup))
+        lines.append(' '.join([str(tid), 'jud', d1, d2, d3]))
+        tid+=1
+    for dtup in testtriplet:
+        d1, d2, d3 = sorted(list(dtup))
+        lines.append(' '.join([str(tid), 'test', d1, d2, d3]))
+        tid+=1
+    outdir = outdir + "/triplet"
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+    outfile=outdir+"/"+str(qid) + ".triplet"
+    with open(outfile, "w+") as f:
+        for l in lines:
+            f.write(l + "\n")
 
+def createTriplet(cwids):
+    doctriplet=list()
+    docnum = len(cwids)
+    cwids.sort()
+    for i in range(docnum):
+        for j in range(i+1, docnum):
+            for k in range(j+1, docnum):
+                doctriplet.append((cwids[i], cwids[j], cwids[k]))
+    return doctriplet
 
 
 conf = (SparkConf()
@@ -246,17 +275,14 @@ sc = SparkContext(conf = conf)
 dictfile="/GW/D5data-2/khui/Clueweb12/html/cw4y/dictionary/did2docurl.dict"
 urlfile="/user/khui/data/ExtractCwdocs/cwidurl/cw4y"
 queryfile="/user/khui/data/query/wtff.xml"
-outdir="/GW/D5data-2/khui/EmpiricalStudy/crowdFlower/pairdata"
-
+outdir="/GW/D5data-2/khui/EmpiricalStudy/crowdFlower/data4jud"
 
 qidyear=dict(zip(list(range(101, 301)), ['wt11']*50+['wt12']*50+['wt13']*50+['wt14']*50))
 dictfile="/GW/D5data-2/khui/Clueweb12/html/cw4y/dictionary/did2docurl.dict"
 qidCwiddocid = readDid4ttsa(dictfile)
 queryfile="/user/khui/data/query/wtff.xml"
-pairperpage=2.0
-docperpage=4.0
 qidQuery=readInQuery(queryfile)
-
+titleWrote=False
 qids=list(range(251,301)) + list(range(201,251))
 for qid in qids:
     year=qidyear[qid]
@@ -266,12 +292,15 @@ for qid in qids:
     ldocs = labelDocs(cwidGrad)
     cwidurls = readcwidurl(sc, qid, urlfile, parNum=24)
     doc4jud, remaindocs = selectDocs(ldocs, cwidGrad, judnum=12)
+    doc4test = createTestDoc(ldocs, remaindocs, testnum=12)
     pair4jud=createJudPairs(doc4jud)
-    ptestnum = int(max(math.ceil(len(pair4jud)/pairperpage) + pairperpage, pairperpage+3))
-    gtestnum = int(max(math.ceil(len(doc4jud)/docperpage) + docperpage, docperpage+3))
-    pair4test=createTestPairs(remaindocs, cwidGrad, testnum=ptestnum)
-    doc4test = createTestDoc4Grad(ldocs, remaindocs, testnum=gtestnum)    
-    writeCFPrefData(qid, query, descrip, qidCwiddocid[qid], cwidurls, outdir, pair4jud, pair4test)   
-    writeCFGradedData(qid, query, descrip, qidCwiddocid[qid], cwidurls, outdir,  doc4jud, doc4test)    
+    pair4test=createTestPairs(doc4test, cwidGrad)
+    judtriplet, testtriplet = createTriplet(doc4jud), createTriplet(doc4test)
+    writeTriplet(qid, judtriplet, testtriplet, outdir)
+    prefTitle = writeCFPrefData(qid, query, descrip, qidCwiddocid[qid], cwidurls, outdir, pair4jud, pair4test)   
+    gradTitle = writeCFGradedData(qid, query, descrip, qidCwiddocid[qid], cwidurls, outdir,  doc4jud, doc4test)    
+    if not titleWrote:
+        writeCFTitle(outdir, prefTitle, gradTitle)
+        titleWrote=True
     print(' '.join(["INFO",str(qid), 'dnum4j:%d'%len(doc4jud), 'dnum4t:%d'%len(doc4test),\
                 'ptnum4j:%d'%len(pair4jud), 'ptnum4t:%d'%len(pair4test)]))
