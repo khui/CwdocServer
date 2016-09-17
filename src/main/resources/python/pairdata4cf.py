@@ -16,7 +16,7 @@ def relgradedqrel(sc, qid, qrelf, parNum=24):
     # for diversity qrel
     for cwid, label in cwidlabel:
         # remove junk
-        if label < 0:
+        if label < 0 or label == 4:
             continue
         if label > 1 and label != 4:
             label = 2
@@ -55,10 +55,18 @@ def readInQuery(queryfile):
     for query in root:
         qid = int(query.attrib['number'])
         qtype = query.attrib['type']
-        shorttxt = ' '.join(query.findall('query')[0].text.replace('\n', '').\
-                replace(',', ' ').title().split())
-        descrip = ' '.join(query.findall('description')[0].text.replace('\n', '').\
-                replace(',', ' ').split())
+        rshorttxt = query.findall('query')[0].text.replace('\n', '').strip()
+        rdescrip = query.findall('description')[0].text.replace('\n', '').strip()
+        if "\"" in rshorttxt:
+            rshorttxt = rshorttxt.replace("\"", "\"\"")
+        if "," in rshorttxt or "\"" in rshorttxt:
+            rshorttxt = "\"" + rshorttxt + "\""
+        if "\"" in rdescrip:
+            rdescrip = rdescrip.replace("\"", "\"\"")
+        if "," in rdescrip or "\"" in rdescrip:
+            rdescrip = "\"" + rdescrip + "\""
+        shorttxt = ' '.join(rshorttxt.title().split())
+        descrip = ' '.join(rdescrip.split())
         subqueries = query.findall('subtopic')
         subquery=dict()
         for s in subqueries:
@@ -144,6 +152,7 @@ def writeCFPrefData(qid, query, description, cwiddocid, cwidourls,
                     "d2_cwid", "d2_did", "d2_ourl", "d2_url", "d2_gjud_trec",
                     "d1_d2_pjud_gold", "d1_d2_pjud_gold_reason"])
     #lines.append(headline)
+    lidpair=dict()
     for docpair in pair4jud:
         doclist = list(docpair)
         random.shuffle(doclist)
@@ -156,6 +165,7 @@ def writeCFPrefData(qid, query, description, cwiddocid, cwidourls,
                 createUrl(cwiddocid[cwid2]), str(cwidGrad[cwid2]),\
                 getPrefLabel(cwidGrad[cwid1], cwidGrad[cwid2]), prefgoldreason])
         lines.append(line)
+        lidpair[lineid]=(cwid1, cwid2)
     for docpair in pair4test:
         doclist = list(docpair)
         random.shuffle(doclist)
@@ -168,6 +178,7 @@ def writeCFPrefData(qid, query, description, cwiddocid, cwidourls,
                 createUrl(cwiddocid[cwid2]), str(cwidGrad[cwid2]),\
                 getPrefLabel(cwidGrad[cwid1], cwidGrad[cwid2]), prefgoldreason])
         lines.append(line)
+        lidpair[lineid]=(cwid1, cwid2)
     outdir = outdir + "/pref"
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -175,7 +186,7 @@ def writeCFPrefData(qid, query, description, cwiddocid, cwidourls,
     with open(outfile, "w+") as f:
         for l in lines:
             f.write(l + "\n")
-    return headline
+    return headline, lidpair
 
 def writeCFTitle(rootoutdir, prefTitle, gradTitle):
     outdir = rootoutdir + "/pref"
@@ -183,13 +194,13 @@ def writeCFTitle(rootoutdir, prefTitle, gradTitle):
         os.makedirs(outdir)
     outfile=outdir+"/title.csv"
     with open(outfile, "w+") as f:
-        f.write(prefTitle)
+        f.write(prefTitle+"\n")
     outdir = rootoutdir + "/grad"
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     outfile=outdir+"/title.csv"
     with open(outfile, "w+") as f:
-        f.write(gradTitle)
+        f.write(gradTitle+"\n")
 
 def writeCFGradedData(qid, query, description, 
                       cwiddocid, cwidourls, outdir,
@@ -211,13 +222,14 @@ def writeCFGradedData(qid, query, description,
                     "d_cwid", "d_did", "d_ourl", "d_url",
                         "d_gjud_gold","d_gjud_gold_reason"])
     #lines.append(headline)
+    lidDoc=dict()
     for cwid in doc4jud:
         lineid = "GJ" + str(qid) + "%03d"%(len(lines))
         line = ','.join([lineid, str(qid), query, description,"False",\
                 cwid, str(cwiddocid[cwid]), cwidourls[cwid],createUrl(cwiddocid[cwid]),\
                 createGold(cwidGrad[cwid]),gradgoldreason])
         lines.append(line)
-
+        lidDoc[lineid]=cwid
     for cwid in doc4test:
         lineid = "GT" + str(qid) + "%03d"%(len(lines))
         line = ','.join([lineid, str(qid), query, description,\
@@ -225,6 +237,7 @@ def writeCFGradedData(qid, query, description,
                         cwidourls[cwid],createUrl(cwiddocid[cwid]),\
                         createGold(cwidGrad[cwid]),gradgoldreason])
         lines.append(line)
+        lidDoc[lineid]=cwid
     outdir = outdir + "/grad"
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -232,18 +245,16 @@ def writeCFGradedData(qid, query, description,
     with open(outfile, "w+") as f:
         for l in lines:
             f.write(l + "\n")
-    return headline
+    return headline, lidDoc
 
 def writeTriplet(qid, judtriplet, testtriplet, outdir):
     lines=list()
     tid=0
-    for dtup in judtriplet:
-        d1, d2, d3 = sorted(list(dtup))
-        lines.append(' '.join([str(tid), 'jud', d1, d2, d3]))
+    for d1, d2, d3, p1, p2, p3, g1, g2, g3 in judtriplet:
+        lines.append(','.join([str(tid), 'jud', d1, d2, d3, p1, p2, p3, g1, g2, g3]))
         tid+=1
-    for dtup in testtriplet:
-        d1, d2, d3 = sorted(list(dtup))
-        lines.append(' '.join([str(tid), 'test', d1, d2, d3]))
+    for d1, d2, d3, p1, p2, p3, g1, g2, g3 in testtriplet:
+        lines.append(','.join([str(tid), 'test', d1, d2, d3, p1, p2, p3, g1, g2, g3]))
         tid+=1
     outdir = outdir + "/triplet"
     if not os.path.exists(outdir):
@@ -253,14 +264,66 @@ def writeTriplet(qid, judtriplet, testtriplet, outdir):
         for l in lines:
             f.write(l + "\n")
 
-def createTriplet(cwids):
+def sortTriplet(p1, p2, p3, pairCwids):
+    dp1, dp2, dp3 = pairCwids[p1], pairCwids[p2], pairCwids[p3]
+    if dp1[0] == dp2[0]:
+        if dp1[1] == dp3[1]:
+            sp1 = p2
+            sp2 = p3
+            sp3 = p1
+        else:
+            sp1 = p1
+            sp2 = p3
+            sp3 = p2
+    elif dp1[0] == dp3[0]:
+        if dp1[1] == dp2[1]:
+            sp1 = p3
+            sp2 = p2
+            sp3 = p1
+        else:
+            sp1 = p1
+            sp2 = p2
+            sp3 = p3
+    else:
+        if dp1[1] == dp2[1]:
+            sp1 = p3
+            sp2 = p1
+            sp3 = p2
+        else:
+            sp1 = p2
+            sp2 = p1
+            sp3 = p3
+    return sp1, sp2, sp3
+
+
+
+def createTriplet(lidPair, lidDoc, cwids):
+    d1d2Lid=dict()
+    dLid=dict()
+    for lid in lidPair:
+        d1, d2 = lidPair[lid]
+        if d1 not in d1d2Lid:
+            d1d2Lid[d1]=dict()
+        d1d2Lid[d1][d2]=lid
+        if d2 not in d1d2Lid:
+            d1d2Lid[d2]=dict()
+        d1d2Lid[d2][d1]=lid
+    for lid in lidDoc:
+        d = lidDoc[lid]
+        dLid[d]=lid
     doctriplet=list()
     docnum = len(cwids)
-    cwids.sort()
     for i in range(docnum):
         for j in range(i+1, docnum):
             for k in range(j+1, docnum):
-                doctriplet.append((cwids[i], cwids[j], cwids[k]))
+                d1, d2, d3 = cwids[i], cwids[j], cwids[k]
+                if d1 in d1d2Lid and d2 in d1d2Lid and d3 in d1d2Lid:
+                    if d2 in d1d2Lid[d1] and d3 in d1d2Lid[d2] and d3 in d1d2Lid[d1]:
+                        p1, p2, p3 = d1d2Lid[d1][d2], d1d2Lid[d2][d3], d1d2Lid[d1][d3] 
+                        sp1, sp2, sp3 = sortTriplet(p1, p2, p3, lidPair)
+                        d1, d2, d3 = lidPair[sp1][0], lidPair[sp1][1], lidPair[sp3][1]
+                        g1, g2, g3 = dLid[d1], dLid[d2], dLid[d3] 
+                        doctriplet.append((d1, d2, d3, sp1, sp2, sp3, g1, g2, g3))
     return doctriplet
 
 
@@ -295,10 +358,12 @@ for qid in qids:
     doc4test = createTestDoc(ldocs, remaindocs, testnum=12)
     pair4jud=createJudPairs(doc4jud)
     pair4test=createTestPairs(doc4test, cwidGrad)
-    judtriplet, testtriplet = createTriplet(doc4jud), createTriplet(doc4test)
+    prefTitle, lidPair = \
+            writeCFPrefData(qid, query, descrip, qidCwiddocid[qid], cwidurls, outdir, pair4jud, pair4test)   
+    gradTitle, lidDoc = \
+            writeCFGradedData(qid, query, descrip, qidCwiddocid[qid], cwidurls, outdir,  doc4jud, doc4test)    
+    judtriplet, testtriplet = createTriplet(lidPair, lidDoc, doc4jud),  createTriplet(lidPair, lidDoc, doc4test)
     writeTriplet(qid, judtriplet, testtriplet, outdir)
-    prefTitle = writeCFPrefData(qid, query, descrip, qidCwiddocid[qid], cwidurls, outdir, pair4jud, pair4test)   
-    gradTitle = writeCFGradedData(qid, query, descrip, qidCwiddocid[qid], cwidurls, outdir,  doc4jud, doc4test)    
     if not titleWrote:
         writeCFTitle(outdir, prefTitle, gradTitle)
         titleWrote=True
